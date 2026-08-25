@@ -10,16 +10,28 @@
 
 _What does each loop iteration actually receive, and why? (You can't fit everything, what's the priority order?)_
 
+Priority (highest → lowest):
+- 1) Task brief (`get_task`) — the immediate ask and any constraints (always in long-context for accuracy).
+- 2) Recent engineering activity (`get_activity`) — retrieval slices for the last N items (high volatility; cite exact records).
+- 3) Team norms / playbook (`get_norms`) — long-context policy that gates allowed actions and escalation rules.
+- 4) Roadmap (`get_roadmap`) — long-context except when a targeted slice is required; pay attention to confidential flags.
+- 5) Past updates (`search_past_updates`) — long-context summary history used for tone/precedent, not full history in every run.
+
+Rationale: the task brief and recent activity are what the draft must ground its claims in; norms and roadmap are smaller policy documents that should be in long-context so Cortex can cite exact rules; past updates are useful for tone and precedent but kept as summarized long-context to limit context size.
+
 ## 2. Retrieve vs. long-context: per source
 
 For each data source, decide: **retrieve** (narrow a large/changing corpus to the relevant slice) or **long-context** (just include a bounded set you can reason over).
 
-| Source | Size / volatility | Decision | Why |
-|---|---|---|---|
-| _Roadmap_ | _large, slow-changing_ | _Retrieve_ | _too big to include; need the relevant slice (and respect confidential flags)_ |
-| _GitHub/Jira activity_ | _large, changing_ | _Retrieve_ | _… + audit/citation needs_ |
-| _This week's task brief_ | _bounded_ | _Long-context_ | _reason over the whole thing_ |
-| _Team norms / playbook_ | _bounded_ | _Long-context_ | _… _ |
+| Source | Size / volatility | Decision | Deciding factor |
+|---|---:|---|---|
+| `get_task` (task brief) | bounded / static | Long-context | The brief is small and authoritative; include whole text so Cortex reasons from the exact ask.
+| `get_activity` (engineering activity) | large / high volatility | Retrieve | High churn and size; retrieve a slice (most recent N entries) and require explicit key-path citation for metric/date claims.
+| `search_past_updates` (past updates) | unbounded / archival | Long-context (summarized) | Use a bounded summary or most-recent weeks for tone/precedent; avoid pulling the entire history each run.
+| `get_roadmap` | medium / slow | Long-context (guarded) | Roadmap items are policy-like; include full shareable roadmap but respect `confidential` flags and treat embargoed items as read-only.
+| `get_norms` | small / policy | Long-context | Norms must be available verbatim so Cortex can cite rules (evidence for escalation and must-not-do checks).
+
+Priority notes: if a retrieved slice is missing a cited fact required by the draft, the agent must escalate rather than invent; retrieval moves must include the source key paths used for each claim.
 
 ## 3. Retrieval quality plan
 
