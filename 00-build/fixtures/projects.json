@@ -9,10 +9,10 @@
     "prd": "PRD-Northstar-v3",
     "prd_summary": "PRD-Northstar-v3: reduce time-to-first-value in self-serve onboarding. In scope: guided activation checklist, step-completion instrumentation, empty-state guidance, contextual tips, a day-2 milestone email. Out of scope: pricing changes.",
     "activity": [
-      { "type": "pr_merged", "id": "#812", "title": "New activation checklist UI", "date": "2026-06-29" },
-      { "type": "pr_merged", "id": "#815", "title": "Instrument step-completion events", "date": "2026-06-30" },
+      { "type": "pr_merged", "id": "#820", "title": "New activation checklist UI", "date": "2026-07-05" },
+      { "type": "pr_merged", "id": "#823", "title": "Instrument step-completion events", "date": "2026-07-06" },
       { "type": "issue_open", "id": "#818", "title": "Empty-state copy needs review", "severity": "normal" },
-      { "type": "metric", "name": "activation_rate", "value": "41%", "prior": "39%", "window": "week-over-week" }
+      { "type": "metric", "name": "activation_rate", "value": "43%", "prior": "41%", "window": "week-over-week" }
     ]
   },
   "P-VEGA": {

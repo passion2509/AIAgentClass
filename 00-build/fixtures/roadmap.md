@@ -8,6 +8,9 @@
   instrumentation. Target: lift activation rate.
 - Status is safe to share in leadership and company-wide updates.
 
+## Notes
+- Data pack update (2026-07-06): recent merges and instrumentation are now present in activity; Northstar metrics show an activation uplift to 43%.
+
 ## Vega (billing migration). INTERNAL
 - GA date is **unconfirmed**, gated on closing the proration Sev-1 (#440) and QA
   sign-off. Do not commit a date in any update.

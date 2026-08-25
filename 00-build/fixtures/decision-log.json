@@ -6,6 +6,12 @@
     "theme": "unconfirmed date, escalate, launch gate"
   },
   {
+    "date": "2026-07-01",
+    "project": "Northstar",
+    "summary": "Decision: accept the activation instrumentation data as shareable for leadership updates; confirm no confidential roadmap items are exposed.",
+    "theme": "data ingest, shareable"
+  },
+  {
     "date": "2026-05-28",
     "project": "team",
     "summary": "Decision: backlog batches larger than 10 stories go to sprint planning to be sized, not straight into the tracker.",
