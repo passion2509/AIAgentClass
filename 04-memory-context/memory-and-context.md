@@ -43,6 +43,33 @@ _Which of these apply, and how? (This is what separates modern agentic retrieval
 - **Self-verification**: _did the update use the retrieved evidence?_
 - **Caching**: _…_
 
+Worked example (per source):
+
+- `get_activity` (engineering activity):
+	- Moves: **routing → document grading → reranking → self-verification → caching (short TTL)**.
+	- Why: activity is high-volume and noisy. Route to the project slice, grade documents for signal (PRs, metrics), rerank by recency+relevance, require the agent to cite the exact key-path for any numeric/date/PR claim, and cache the retrieved slice for the run to avoid repeated calls.
+
+- `search_past_updates` (past updates):
+	- Moves: **routing → summarization → reranking**.
+	- Why: past updates are unbounded. Route to recent weeks, summarize / extract precedent phrasing, and rerank to support tone and avoid pulling full history into context.
+
+- `get_roadmap`:
+	- Moves: **document grading → confidentiality guard → caching (longer TTL)**.
+	- Why: roadmap entries are policy-like. Grade the retrieved section for shareability, apply a confidentiality guard (do not include embargoed items in external drafts), and cache for durability across runs.
+
+- `get_norms`:
+	- Moves: **long-context inclusion + citation checks**.
+	- Why: norms are small policy documents that should be available verbatim; require the agent to cite the specific rule (key/line) it relied on when choosing to escalate or to omit a date.
+
+- `get_task` (task brief):
+	- Moves: **long-context inclusion + self-verification**.
+	- Why: the brief is authoritative for intent; include in full and verify final draft aligns with the original ask before finishing.
+
+Operational rules to enforce in the build:
+- Every numeric or date claim must be accompanied by the source key-path used for verification (e.g., `activity[3].value`). If missing, the drafter must escalate.
+- Caching TTLs: activity (short, e.g., 5–15 minutes), roadmap/norms (session/longer), past-updates summaries (session).
+- All retrieval moves must produce a brief provenance object that the critic can consume to validate claims.
+
 ## 4. Memory map (your PM brain)
 
 | Memory type | What Cortex stores | Scope / TTL |
