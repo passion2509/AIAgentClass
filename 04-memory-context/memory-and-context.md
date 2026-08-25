@@ -79,6 +79,16 @@ Operational rules to enforce in the build:
 | **Semantic** (durable facts/prefs) | _team norms, roadmap facts_ | _…_ |
 | **Shared** (across agents) | _…_ | _…_ |
 
+### Concrete memory map
+
+- **Working** — ephemeral objects kept for the current run only: retrieved `activity` slice, the current draft, retrieval provenance (key-paths), and any proposed story queue. TTL: run-only (cleared at end of run).
+
+- **Episodic** — past run artifacts and decisions: prior status-update drafts, decision-log entries, and escalation records. Scope: per-project historic traces. TTL: 90 days (retain for review and audit; prune older runs automatically unless flagged).
+
+- **Semantic** — durable facts and policies: team norms, shareable roadmap facts, approved PRD items, backlog caps. Scope: workspace-wide. TTL: 1 year (review annually) with explicit retention/expiry metadata for items that are time-bound (e.g., GA dates).
+
+- **Shared** — cross-agent shared metadata: canonical project IDs, permission flags (confidential/embargoed), and agent configuration settings. Scope: global to the org/workspace. TTL: indefinite until changed; changes require an audit record.
+
 ## 5. Memory risks & mitigations
 
 | Risk | Mitigation |
@@ -87,3 +97,23 @@ Operational rules to enforce in the build:
 | _Poisoning_ | _…_ |
 | _Staleness_ | _…_ |
 | _Confidential / retention_ | _scoping + flags (Cortex touches embargoed roadmap)_ |
+
+Detailed risks & mitigations
+
+- **Drift (model-safe but stale assumptions):**
+	- Where it bites: semantic memories (e.g., product goals or QA status) that change over time cause incorrect green/yellow/red calls.
+	- Mitigation: add TTLs and periodic revalidation jobs (eg. weekly probes) that re-fetch authoritative sources and mark items stale; drafts that rely on semantic facts older than their TTL must re-retrieve or escalate.
+
+- **Poisoning (bad or malicious inputs):**
+	- Where it bites: episodic or shared memories accepting external inputs (e.g., user-uploaded fixtures) can introduce false facts.
+	- Mitigation: source authentication (only accept fixtures from trusted origins), document grading (filter anomalous items), and a human-review gating step for high-impact changes (e.g., roadmap edits, GA dates).
+
+- **Staleness (forgotten but still used):**
+	- Where it bites: cached retrievals (activity slice) that exceed their TTL cause the agent to cite expired metrics.
+	- Mitigation: short TTLs on volatile caches, cache invalidation on ingest, and explicit provenance timestamps included in every claim so the critic can flag old evidence.
+
+- **Confidential / retention (PII, embargoed roadmap):**
+	- Where it bites: accidental inclusion of embargoed items (Orbit) in company-wide updates.
+	- Mitigation: per-document flags (`confidential`, `embargoed`) enforced by the retrieval pipeline; redact or omit flagged content from external-draft contexts; log access to confidential items and require explicit human approval before inclusion.
+
+Checkpoint rule: every draft must include a provenance block mapping main claims to source key-paths and timestamps; the critic enforces this and fails drafts without provenance.
