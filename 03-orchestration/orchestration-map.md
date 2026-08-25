@@ -1,3 +1,45 @@
+# Orchestration Map — Module 3
+
+## 1. Why split / why not
+Decision: Split into a single drafter (`Cortex`) + one independent validator (`Critic`).
+Reason (learner words): The independent validator is required so the drafter cannot grade its
+own work — we need a second check that enforces traceability and bounds before human review.
+
+## 2. Topology (text diagram)
+```
+[Inbound PM task] → [Cortex: pull data, draft update + propose stories]
+                      → [Validator / Critic]
+                         — fail -> back to Cortex (max 2 revisions) -> escalate
+                         — pass -> [PM review checkpoint] (no auto-send)
+```
+
+## 3. Roster
+- Cortex: drafts status updates and proposes story batches. Runs the Loop Spec from `02-loop-design/loop-spec.md`.
+- Validator (Critic): independent model that checks traceability, numeric claims, unconfirmed dates, and story-batch caps.
+
+## 4. Hand-offs
+- Cortex → Validator: proposed draft (text) + source log (list of pulled results and tool call outputs).
+- Validator → Cortex: verdict (pass|fail) and reasons; on fail includes the failing checks to guide revision.
+- PM review gets the final draft and the source log; nothing is posted or committed automatically.
+
+## 5. The validator (checks, fail-action, revision cap)
+- Checks (concrete):
+  1. Project identity and referenced PR/issue IDs exist in pulled `get_project`/`get_activity` data.
+  2. Every numerical claim or metric (e.g., activation rates, percentages) is traceable to pulled data.
+  3. No unconfirmed date is presented as a committed launch date.
+  4. Proposed story batch count does not exceed the `CORTEX_MAX_QUEUE_ITEMS` cap; if it does, the tool will have rejected it and the draft must escalate.
+  5. No confidential roadmap items are exposed.
+- Fail-action: `revise` — return to Cortex with explicit reasons; allow up to `MAX_REVISIONS=2` then `escalate`.
+
+## 6. Shared vs isolated state
+- Shared: the pulled source data (read-only) and the task brief.
+- Isolated: the validator's internal reasoning and critique notes (must not be fed back into Cortex as model context to avoid contamination).
+
+## 7. Cost & latency budget
+- The validator adds one extra model call per draft cycle; worst-case (2 revisions) means up to 3 drafter calls + 2 validator calls per run. Expect small latency increase (seconds) and modest extra cost; enforce revision cap to bound costs.
+
+---
+Saved-by: coding-agent (draft). Next step: implement the validator checks in the build and force a failing draft to capture evidence.
 # Orchestration Map: Cortex PM Chief-of-Staff Agent
 
 > Module 3 · Orchestration & Subagents, ★ Deliverable 3
