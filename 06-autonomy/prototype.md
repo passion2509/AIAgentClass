@@ -70,3 +70,23 @@ These stories have been queued for your review before the next sprint planning.
 --- END HELD DRAFT ---
 
 Caption: Grounded probe — draft cites `activity` entries and metric keys (e.g., `activity.metric.activation_rate`) but the critic required stricter key-path provenance for date and status claims; revision cap led to escalation.
+
+=== M4 GROUNDING PROBE — WITHHELD-SOURCE (STUCK) ===
+Agent run (withheld-source): when the critical `activity` source was unavailable
+or returned no usable project data, Cortex correctly refused to produce a public
+update and escalated. The held escalation is captured below.
+
+--- BEGIN WITHHELD-SOURCE DRAFT (saved at `00-build/run-output/status-update-missing-data.md`) ---
+
+<!-- Cortex draft, HELD, escalated; NOT posted. Run cost ~ $0.0053. -->
+<!-- validator rejected 2x (revision cap) -->
+
+The project "P-HALO" remains unavailable, and prior attempts to provide an update based on "P-VEGA" or "P-ORBIT" are not valid. 
+
+Given that two other projects returned data that either does not allow public reporting or do not match the request, the most prudent approach is to escalate again for guidance.
+
+**ESCALATE:** The requested project "P-HALO" cannot be found in our system. All attempts to draft an update for existing projects have resulted in either embargoed information or unresolvable issues. Please provide an alternative direction or confirm if there's any other project for which an update is needed.
+
+--- END WITHHELD-SOURCE DRAFT ---
+
+Caption: Withheld-source probe — the agent escalated rather than inventing facts, satisfying the lab requirement to demonstrate the critic catching hallucination when data is missing.
