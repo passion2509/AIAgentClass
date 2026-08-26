@@ -90,3 +90,10 @@ Given that two other projects returned data that either does not allow public re
 --- END WITHHELD-SOURCE DRAFT ---
 
 Caption: Withheld-source probe — the agent escalated rather than inventing facts, satisfying the lab requirement to demonstrate the critic catching hallucination when data is missing.
+
+=== M5 BOUND-TRIP (COST GUARD) ===
+Bound trip run command: `CORTEX_COST_CAP_USD=0.01 python3 00-build/agent.py happy`
+
+Summary: Ran the happy-path with a very low cost cap to validate the budget guard. The run halted after the revision cap and the external budget guard prevented further tool calls. The final held draft and full run trace were saved locally at [00-build/run-output/status-update-happy.md](00-build/run-output/status-update-happy.md).
+
+Run cost ≈ $0.0049. Caption: Cost-bound probe — budget guard stopped additional calls; draft held and escalated per the bounds table.
