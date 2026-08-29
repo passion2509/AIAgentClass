@@ -1,3 +1,18 @@
+# Production & Autonomy — Autonomy Dial (Step 1)
+
+This file captures the Autonomy Dial by user segment (Module 6, Step 1). It records the chosen Trust Ladder rung for each segment and a one-line rationale.
+
+## Autonomy Dial by segment
+
+| Segment | Trust Ladder rung | One-line rationale |
+|---|---|---|
+| Seasoned ops user | bounded-autonomous | Runs trusted templates daily and can approve writes with audit logs; low-risk for scoped automated updates. |
+| New eng lead | supervised | Needs human approval for external writes; uses automation for drafts and recommendations under oversight. |
+| Exec stakeholder | assisted | Receives summaries and recommendations only; no automated external actions permitted. |
+
+---
+
+Checkpoint: Step 1 completed — Autonomy Dial table written. I will wait for your explicit "go" before proceeding to Step 2 (Trust Ladder placement + eval gate). 
 # Production & Autonomy: Cortex PM Chief-of-Staff Agent
 
 > Module 6 · ★ Deliverable 5, how you'd ship it, govern it, and widen trust over time
