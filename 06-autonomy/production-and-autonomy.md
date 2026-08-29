@@ -31,6 +31,30 @@ Checkpoint: Step 1 completed — Autonomy Dial table written. I will wait for yo
 **Notes / sourcing:** The eval gate pulls concrete evals from `05-bounds-evals/bounds-and-evals.md` §3 (EV-1..EV-4) and the cost-bound behavior in EV-4.
 
 Checkpoint: Step 2 drafted. I'll wait for your confirmation to proceed to Step 3 (deployment plan, ROI, widen rule). Say "go" to continue.
+
+## Step 3 — Deployment plan, ROI, widen-autonomy rule, governance
+
+### 1) Deployment plan
+- Runtime: managed platform (Kubernetes/managed container) with autoscaling and an agent-runner service that enforces external bounds (iteration counter, timeout, budget guard).
+- Operator / on-call: `Platform Ops (owner: ops-oncall@example.com)` — responsible for emergency pause endpoint and approving HITL checkpoints when escalation occurs.
+- Rollback strategy: automated rollback script that (a) disables outgoing write tools, (b) reverts any pushed drafts via stored audit entries and one-use credential revocations, and (c) toggles the autonomy dial to `assisted` for affected segments.
+- Monitoring signals: eval pass % (EV-1..EV-4), escalation rate, budget utilization, model latency, and failed-tool retry counts.
+
+### 2) ROI metrics
+- Outcome metric: Time-to-decision reduction — measure average time from request → parked draft; target: 30% reduction vs manual baseline, tracked via run timestamps.
+- Cost-to-serve: $/delivered-draft (tokens + infra) — target: <$0.75 per parked draft; measured via billing exports and per-run cost logging.
+- Trust incidents: number of incidents per 1,000 runs (incidents defined in Step 2) — target: <2 incidents per 1,000 runs.
+
+### 3) Widen-autonomy decision rule
+- Rule (one sentence): "If over a 4-week window the eval gate reaches ≥90% aggregate pass across EV-1..EV-4 and incidents remain <1 per 1,000 runs, raise the segment one rung and issue a controlled canary enabling bounded write templates for that segment." This rule is executed only after a manual review of the replay set results.
+
+### 4) Governance & forward strategy
+- Compliance: Define a data exclusion list (PII, CONFIDENTIAL roadmap items) that the runner strips from prompts; credential broker enforces separation and logs any attempted access.
+- Safety: All external posts/DB writes remain HITL for `Exec stakeholder` and require single-use JIT tokens for `Seasoned ops user` bounded-autonomous actions; kill switch halts all writes.
+- Reliability: Enforce `Max iterations=4`, `Timeout=90s`, `Cost cap $1/day` (M5 bounds); automatic degrade path to a read-only summary mode when model calls fail repeatedly.
+- Next segment to widen into: `New eng lead` → after meeting the widen rule, pilot bounded-autonomous template writes for a subset of non-production update types.
+
+Checkpoint: Step 3 written. I will wait for your "go" to proceed to Step 4 (write the two capstone prose deliverables and capture the end-to-end screenshot if needed).
 # Production & Autonomy: Cortex PM Chief-of-Staff Agent
 
 > Module 6 · ★ Deliverable 5, how you'd ship it, govern it, and widen trust over time
