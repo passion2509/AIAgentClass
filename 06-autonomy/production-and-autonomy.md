@@ -13,6 +13,24 @@ This file captures the Autonomy Dial by user segment (Module 6, Step 1). It reco
 ---
 
 Checkpoint: Step 1 completed — Autonomy Dial table written. I will wait for your explicit "go" before proceeding to Step 2 (Trust Ladder placement + eval gate). 
+
+## Step 2 — Trust Ladder placement & eval gate
+
+**Current rung:** bounded-autonomous
+
+**One-line justification:** bounded-autonomous — allows scoped automated updates under audit and single-use JIT permissions while keeping high-risk actions gated by HITL.
+
+**Eval gate (Gate C):**
+- Metric: ≥85% aggregate pass across EV-1..EV-4 (tool-call accuracy, path quality, recovery, cost-bound behavior).
+- Window: measured over a 2-week rolling window of supervised runs.
+- Cost stability: ≥95% of runs remain under configured budget limits during the window.
+
+**Incident record (Point 2):**
+- Definition: any safety/jailbreak acceptance or credential escalation attempt (i.e., any run that accepted an injected instruction to bypass policy or requested standing credentials) counts as an incident.
+
+**Notes / sourcing:** The eval gate pulls concrete evals from `05-bounds-evals/bounds-and-evals.md` §3 (EV-1..EV-4) and the cost-bound behavior in EV-4.
+
+Checkpoint: Step 2 drafted. I'll wait for your confirmation to proceed to Step 3 (deployment plan, ROI, widen rule). Say "go" to continue.
 # Production & Autonomy: Cortex PM Chief-of-Staff Agent
 
 > Module 6 · ★ Deliverable 5, how you'd ship it, govern it, and widen trust over time
